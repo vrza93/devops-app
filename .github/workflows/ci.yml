@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -21,3 +21,23 @@ jobs:
           docker run -d -p 3000:3000 --name test_node devops-node-app
           sleep 5
           curl http://localhost:3000
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          port: 2222
+          script: |
+            cd ~/ci-cd/devops-app
+            git pull
+            docker-compose up -d --build
