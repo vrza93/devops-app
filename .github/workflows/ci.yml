@@ -18,7 +18,7 @@ jobs:
 
       - name: Run container test
         run: |
-          docker run -d -p 3000:3000 --name test_node devops-node-app
+          docker run -d -p 3000:80 --name test_node devops-node-app
           sleep 5
           curl http://localhost:3000
 
